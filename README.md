@@ -129,5 +129,3 @@ Replace `your_script_name.py` with the actual name of the script file.
 - To ensure all your work is saved, use the **'s'**, **'e'**, or **'ESC'** keys to exit properly.
 
 ---
-
-By following this guide, you should be able to successfully set up the application, annotate your images, and export your dataset in a format ready for YOLO model training.
