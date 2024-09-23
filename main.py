@@ -152,5 +152,7 @@ def main():
         json.dump(annotations, f)
     print("All annotations saved.")
 
+    export_yolo_dataset()
+
 if __name__ == '__main__':
     main()
