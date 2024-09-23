@@ -68,8 +68,14 @@ def main(training_valid_ratio=0.8) -> None:
 
     #create data.yml
     with open(os.path.join(current_path, "dataset", "data.yml"), 'w') as file: 
-        file.write(f"train: {os.path.join(current_path, 'dataset', 'train')}\n")
-        file.write(f"val: {os.path.join(current_path, 'dataset', 'valid')}\n")
+        training = os.path.join(current_path, 'dataset', 'train')
+        validate = os.path.join(current_path, 'dataset', 'valid')
+
+        training = training.replace('\\', '/') + '/images'
+        validate = validate.replace('\\', '/') + '/images'
+
+        file.write(f"train: {training}\n")
+        file.write(f"val: {validate}\n")
         file.write("\n")
         file.write(f"nc: {len(labels_names)}\n")
         file.write(f"names: [{get_labls(labels_names)}]\n")
