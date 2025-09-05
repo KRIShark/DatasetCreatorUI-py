@@ -1,6 +1,6 @@
 # YOLOv8 Dataset Creation Tool
 
-This Python tool allows you to create labeled datasets for YOLOv8 model training by annotating images with bounding boxes and exporting them in the YOLO format.
+This Python tool allows you to create labeled datasets for various model training by annotating images with bounding boxes and exporting them in multiple formats.
 
 ## Setup Manual
 
@@ -14,12 +14,23 @@ This Python tool allows you to create labeled datasets for YOLOv8 model training
 
    Open a command prompt or terminal, navigate to the directory containing the script, and run:
 
-pip install -r requirements.txt
+uv pip install -r requirements.txt
 
 
 2. **Prepare the 'frames' Directory:**
 
 Ensure that you have a folder named `frames` in the same directory as the script. This folder should contain all the images you want to annotate. If you have a JSON file with existing labels, place it inside this `frames` directory.
+3. **Configure settings:**
+
+   Edit `settings.json` to define label names and choose an export format. The index of each label in the array is used as the class id.
+   Example:
+   ```json
+   {
+     "labels": ["EnamyTank", "FrendlyTank"],
+     "export_format": "YOLOv8"
+   }
+   ```
+   Supported export formats: YOLOv11, YOLOv9, YOLOv8, YOLOv5, YOLOv7, COCO JSON, YOLO Darknet, Pascal VOC XML, TFRecord, PaliGemma, CreateML JSON.
 
 ---
 
@@ -29,7 +40,7 @@ Ensure that you have a folder named `frames` in the same directory as the script
 
 Run the script by executing:
 
-python main.py
+uv run main.py
 
 
 Replace `your_script_name.py` with the actual name of the script file.
@@ -44,7 +55,7 @@ Replace `your_script_name.py` with the actual name of the script file.
 
   - **Select a Label:**
 
-    - Before drawing a box, select a label by pressing number keys **1-9** on your keyboard.
+    - Before drawing a box, select a label by pressing number keys starting from **1** on your keyboard.
     - The selected label will be printed in the console.
 
   - **Add a Box:**
@@ -64,9 +75,9 @@ Replace `your_script_name.py` with the actual name of the script file.
 
   - Press **'s'** or the **'ESC'** key to save all annotations to `annotations.json` and exit the application.
 
-- **Export YOLO Dataset:**
+- **Export Dataset:**
 
-  - Press **'e'** to save annotations and export the dataset in YOLO format.
+  - Press **'e'** to save annotations and export the dataset in the format specified in `settings.json`.
   - Images will be copied to an `images` folder, and label files will be created in a `labels` folder.
 
 ### Additional Controls:
@@ -85,7 +96,7 @@ Replace `your_script_name.py` with the actual name of the script file.
 
 ### YOLO Dataset Format:
 
-- When exported, each image will have a corresponding label file with the same base name and a `.txt` extension.
+- When exporting in YOLO formats, each image will have a corresponding label file with the same base name and a `.txt` extension.
 - Label files contain lines in the format:
 
 <class_id> <x_center> <y_center> <width> <height>
@@ -104,9 +115,9 @@ Replace `your_script_name.py` with the actual name of the script file.
 - Ensure that you select the correct label before drawing each bounding box.
 - The labels correspond to the number keys pressed:
 
-  - Pressing **'1'** sets the label to **1**, **'2'** sets it to **2**, etc.
+  - Pressing **'1'** selects the first label, **'2'** selects the second, and so on.
 
-- The application assumes labels from **1 to 9**.
+- The application assumes labels start at **1**.
 
 ### Troubleshooting:
 
