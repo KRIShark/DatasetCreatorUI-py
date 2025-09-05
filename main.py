@@ -2,41 +2,42 @@ import os
 import json
 import re
 import cv2
-import numpy as np
 
 # Global variables
-drawing = False  # True if mouse is pressed
-ix, iy = -1, -1
-ex, ey = -1, -1
 current_label = 1
 boxes = []
 labels_list = []
 annotations = {}
 image_files = []
 current_image_index = 0
+img = None
+img_original = None
 
 # Define labels mapping from number keys to labels
 label_map = {str(i): i for i in range(1, 10)}  # mapping keys '1'-'9' to labels 1-9
 
-def mouse_callback(event, x, y, flags, param):
-    global ix, iy, ex, ey, drawing, img, img_copy, boxes, labels_list, current_label
+# Define color map for labels
+color_map = {
+    1: (0, 255, 0),
+    2: (0, 0, 255),
+    3: (255, 0, 0),
+    4: (0, 255, 255),
+    5: (255, 0, 255),
+    6: (255, 255, 0),
+    7: (128, 0, 128),
+    8: (0, 128, 128),
+    9: (128, 128, 0)
+}
 
-    if event == cv2.EVENT_LBUTTONDOWN:
-        drawing = True
-        ix, iy = x, y
-        ex, ey = x, y
-    elif event == cv2.EVENT_MOUSEMOVE:
-        if drawing:
-            ex, ey = x, y
-            img = img_copy.copy()
-            cv2.rectangle(img, (ix, iy), (ex, ey), (0, 255, 0), 2)
-    elif event == cv2.EVENT_LBUTTONUP:
-        drawing = False
-        ex, ey = x, y
-        cv2.rectangle(img, (ix, iy), (ex, ey), (0, 255, 0), 2)
-        boxes.append((ix, iy, ex, ey))
-        labels_list.append(current_label)
-        img_copy = img.copy()
+def draw_boxes():
+    global img
+    img = img_original.copy()
+    for box, label in zip(boxes, labels_list):
+        x1, y1, x2, y2 = box
+        color = color_map.get(label, (0, 255, 0))
+        cv2.rectangle(img, (x1, y1), (x2, y2), color, 2)
+        text_y = y1 - 10 if y1 - 10 > 10 else y1 + 20
+        cv2.putText(img, str(label), (x1, text_y), cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2)
 
 def save_annotations():
     global annotations, image_file, boxes, labels_list
@@ -81,7 +82,7 @@ def sorted_numerically(image_list):
     return sorted(image_list, key=numerical_sort)                
 
 def main():
-    global img, img_copy, image_file, boxes, labels_list, current_label, current_image_index
+    global img, img_original, image_file, boxes, labels_list, current_label, current_image_index
 
     # Get list of image files
     image_files = [f for f in os.listdir('frames') if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
@@ -91,17 +92,16 @@ def main():
 
     while current_image_index < len(image_files):
         image_file = image_files[current_image_index]
-        img = cv2.imread(os.path.join('frames', image_file))
-        if img is None:
+        img_original = cv2.imread(os.path.join('frames', image_file))
+        if img_original is None:
             print(f"Failed to load image {image_file}")
             current_image_index += 1
             continue
-        img_copy = img.copy()
+        img = img_original.copy()
         boxes = []
         labels_list = []
 
         cv2.namedWindow('Image')
-        cv2.setMouseCallback('Image', mouse_callback)
 
         while True:
             cv2.imshow('Image', img)
@@ -131,19 +131,23 @@ def main():
             elif chr(key) in label_map:
                 current_label = label_map[chr(key)]
                 print(f"Label set to {current_label}")
+            elif key == ord('b'):  # Add bounding box
+                roi = cv2.selectROI('Image', img, fromCenter=False, showCrosshair=True)
+                cv2.destroyWindow('ROI')
+                x, y, w, h = roi
+                if w > 0 and h > 0:
+                    boxes.append((x, y, x + w, y + h))
+                    labels_list.append(current_label)
+                    draw_boxes()
             elif key == ord('c'):  # Clear boxes
                 boxes = []
                 labels_list = []
-                img = img_copy.copy()
-            elif key == ord('u'):  # Undo last box
+                draw_boxes()
+            elif key == ord('u') or key == 26:  # Undo last box (u or Ctrl+Z)
                 if boxes:
                     boxes.pop()
                     labels_list.pop()
-                    img = img_copy.copy()
-                    for box in boxes:
-                        x1, y1, x2, y2 = box
-                        cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
-                    img_copy = img.copy()
+                    draw_boxes()
 
         cv2.destroyAllWindows()
 

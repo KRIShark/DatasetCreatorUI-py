@@ -47,11 +47,11 @@ Replace `your_script_name.py` with the actual name of the script file.
     - Before drawing a box, select a label by pressing number keys **1-9** on your keyboard.
     - The selected label will be printed in the console.
 
-  - **Draw a Box:**
+  - **Add a Box:**
 
-    - **Left-click and hold** where you want one corner of the bounding box.
-    - **Drag the mouse** to the opposite corner.
-    - **Release the mouse button** to finalize the bounding box.
+    - Press **'b'** to open the ROI selector.
+    - Draw the box and press **Enter** or **Space** to confirm.
+    - Each box is shown in a color corresponding to its label with the label number displayed above it.
 
 - **Navigating Between Images:**
 
@@ -76,8 +76,7 @@ Replace `your_script_name.py` with the actual name of the script file.
   - Press **'c'** to remove all drawn bounding boxes on the current image.
 
 - **Undo Last Box:**
-
-  - Press **'u'** to undo the last bounding box you drew.
+  - Press **Ctrl+Z** or **'u'** to undo the last bounding box you drew.
 
 ### Annotations File:
 
